@@ -22,9 +22,11 @@ jobs:
       - name: Install npm packages 
         run: npm ci
       - name: Audit npm packages 
-        run: npm audit > audit-report
+        run: |
+          npm audit > audit-report
+          cat audit-report
       - name: PR comment with file
         uses: thollander/actions-comment-pull-request@v2
         with:
-          filePath: audit-report
+          filePath: ./audit-report
           comment_tag: execution
