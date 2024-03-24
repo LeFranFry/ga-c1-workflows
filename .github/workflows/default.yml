@@ -15,8 +15,11 @@ jobs:
   # This workflow contains a single job called "build"
   audit:
     runs-on: ubuntu-latest
+
     permissions:
-      pull-requests: write
+      issues: write
+      pull-requests: write
+      
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
