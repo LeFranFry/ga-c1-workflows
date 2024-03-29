@@ -73,7 +73,7 @@ jobs:
     needs: verify-install
   
   build:
-    if: ${{ !cancelled() }}
+    #if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       packages: write
