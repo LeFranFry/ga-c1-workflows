@@ -65,13 +65,25 @@ jobs:
         with:
           name: audit-report
           path: ./audit-report
+    needs: verify-install
+
+  report-audit:
+    runs-on: ubuntu-latest
+    if: needs.audit.result == 'failure'
+    steps:
+      - name: Download report
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: audit-report
+      - name: Show report
+        run: cat audit-report
       - name: PR comment with file
         if: ${{ github.event_name == 'pull_request' && always() }} 
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: ./audit-report
           comment_tag: execution
-    needs: verify-install
+    needs: audit
   
   build:
     #if: ${{ !cancelled() }}
