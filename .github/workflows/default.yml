@@ -74,9 +74,9 @@ jobs:
           username: ${{ env.DOCKER_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build docker container
-        run: docker build -t ghcr.io/${{ env.DOCKER_USER }}/dummy-app:1.0 .
+        run: docker build -t ghcr.io/dummy-app:1.0 .
       - name: Push docker container
-        run: docker push ghcr.io/${{ env.DOCKER_USER }}/dummy-app:1.0
+        run: docker push ghcr.io/dummy-app:1.0
     env:
       DOCKER_USER: ${{ github.actor }}
     needs: [ audit, test]
