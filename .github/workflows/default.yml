@@ -81,10 +81,12 @@ jobs:
           registry: ghcr.io
           username: ${{ env.DOCKER_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set owner name to lowercase
+        run: echo "LC_DOCKER_USER=${{ env.DOCKER_USER,,}}" >> ${GITHUB_ENV}
       - name: Build docker container
-        run: docker build -t ghcr.io/${GITHUB_REPOSITORY#*/}/dummy-app:1.0 .
+        run: docker build -t ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:1.0 .
       - name: Push docker container
-        run: docker push ghcr.io/${GITHUB_REPOSITORY#*/}/dummy-app:1.0
+        run: docker push ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:1.0
     env:
       DOCKER_USER: ${{ github.actor }}
     needs: [ audit, test]
