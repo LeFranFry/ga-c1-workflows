@@ -13,13 +13,35 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
+  verify-install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12, 14, 20]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install npm packages 
+        run: npm ci
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install npm packages 
+        run: npm ci
+      - name: Audit npm packages
+        run: npm test
+        continue-on-error: true
+    needs: verify-install
+  
   audit:
     runs-on: ubuntu-latest
-
     permissions:
       issues: write
-      pull-requests: write
-      
+      pull-requests: write    
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -30,7 +52,17 @@ jobs:
           npm audit > audit-report
           cat audit-report
       - name: PR comment with file
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: ./audit-report
           comment_tag: execution
+    needs: verify-install
+  
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docker container
+        run: docker build -t dummy-app:1.0 .
+    needs: [ audit, test]
