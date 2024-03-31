@@ -1,0 +1,49 @@
+
+name: Audit packages
+
+on:
+  workflow_call:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write    
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 14
+          cache: npm
+      - name: Install npm packages 
+        run: npm ci
+      - name: Audit npm packages 
+        run: |
+          npm audit > audit-report
+          cat audit-report
+        continue-on-error: true
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: audit-report
+          path: ./audit-report
+
+  report-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download report
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: audit-report
+      - name: Show report
+        run: cat audit-report
+      - name: PR comment with file
+        if: ${{ github.event_name == 'pull_request' && always() }} 
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ./audit-report
+          comment_tag: execution
+    needs: audit
