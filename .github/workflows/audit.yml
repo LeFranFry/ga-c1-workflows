@@ -38,12 +38,18 @@ jobs:
         uses: actions/download-artifact@v4.1.4
         with:
           name: audit-report
+      - run: AUDIT_REPORT=${cat audit-report}
+      - name: Get report summary
+        uses: ./github/actions/audit-summary
+        id: summary
+        with:
+          audit-report: ${AUDIT_REPORT}
       - name: Show report
         run: cat audit-report
       - name: PR comment with file
         if: ${{ github.event_name == 'pull_request' && always() }} 
         uses: thollander/actions-comment-pull-request@v2
         with:
-          filePath: ./audit-report
+          message: ${{ steps.summary.outputs.audit-report }}
           comment_tag: execution
     needs: audit

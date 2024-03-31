@@ -1,0 +1,15 @@
+name: 'Audit summarizer'
+description: 'This action takes the npm audit report and calls to action if needed summarizing the report'
+inputs:
+  audit-report:
+    description: 'The npm audit output'
+    required: true
+outputs:
+  audit-summary:
+    description: 'The npm audit report summary'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.audit-report }}
