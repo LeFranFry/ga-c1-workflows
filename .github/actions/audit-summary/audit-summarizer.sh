@@ -1,9 +1,11 @@
-#!/bin/sh -l
+#!/bin/sh
 
-auditReport=$1
+auditFile=$1
+auditOutput=$(cat $auditFile | grep -v 'npm')
+
 summary=":white_check_mark: All Good! No critical or moderate vulnerabilities found"
 
-if [[ $auditReport == *"moderate"* || $auditReport == *"critical"* ]]; then
+if [[ $( (echo "$auditOutput" | grep 'moderate\|critical') ) ]]; then
     summary=":fire: ALERT! Some vulnerabilites were found! Please check the report details!"
 fi
 

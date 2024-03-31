@@ -34,16 +34,16 @@ jobs:
   report-audit:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Download report
         uses: actions/download-artifact@v4.1.4
         with:
           name: audit-report
-      - run: AUDIT_REPORT=${cat audit-report}
       - name: Get report summary
-        uses: ./github/actions/audit-summary
+        uses: ./.github/actions/audit-summary
         id: summary
         with:
-          audit-report: ${AUDIT_REPORT}
+          audit-report: ./audit-report
       - name: Show report
         run: cat audit-report
       - name: PR comment with file
