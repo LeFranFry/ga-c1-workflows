@@ -42,6 +42,9 @@ jobs:
     needs: verify-install
   
   audit:
+    permissions:
+      issues: write
+      pull-requests: write
     uses: ./.github/workflows/audit.yml
     needs: verify-install
   
