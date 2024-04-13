@@ -9,6 +9,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      version:
+        default: '1.0'
+        description: Version to publish
+        
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -64,9 +69,9 @@ jobs:
       - name: Set owner name to lowercase
         run: echo "LC_DOCKER_USER=${DOCKER_USER,,}" >> ${GITHUB_ENV}
       - name: Build docker container
-        run: docker build -t ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:1.0 .
+        run: docker build -t ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${github.event.inputs.version} .
       - name: Push docker container
-        run: docker push ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:1.0
+        run: docker push ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${github.event.inputs.version}
     env:
       DOCKER_USER: ${{ github.actor }}
     needs: [ audit, test]
