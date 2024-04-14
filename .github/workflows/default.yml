@@ -69,9 +69,9 @@ jobs:
       - name: Set owner name to lowercase
         run: echo "LC_DOCKER_USER=${DOCKER_USER,,}" >> ${GITHUB_ENV}
       - name: Build docker container
-        run: docker build -t ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${github.event.inputs.version} .
+        run: docker build -t ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${{ github.event.inputs.version }} .
       - name: Push docker container
-        run: docker push ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${github.event.inputs.version}
+        run: docker push ghcr.io/${LC_DOCKER_USER}/${GITHUB_REPOSITORY#*/}/dummy-app:${{ github.event.inputs.version }}
     env:
       DOCKER_USER: ${{ github.actor }}
     needs: [ audit, test]
